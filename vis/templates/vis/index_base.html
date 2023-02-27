@@ -1,0 +1,432 @@
+{% extends "./base.html" %}
+
+{% block content %}
+
+
+<div>
+	<h1>
+		<!-- Continuous Evaluation Tool -->
+	</h1>
+</div>
+
+
+<div class="content-page wrap">
+
+<!-- {% if ees_list %}
+    <ul>
+    {% for ee in ees_list %}
+        <li><a href="/vis/{{ ee.id }}/">{{ ee.name }}</a></li>
+    {% endfor %}
+    </ul>
+{% else %}
+    <p>No Rounds are available.</p>
+{% endif %} -->
+
+{% block summary %}
+<div class="row">
+
+<div class="col-md-4"> 
+<div class="card mb-3 " ">
+	<div class="card-body">
+	  <h5 class="card-title">Rounds</h5>
+	  <p class="card-text">
+		<i class="bi-arrow-clockwise"></i>
+		 {{ ees_list|length }}</p>
+	</div>
+  </div>
+</div>
+<div class="col-md-4"> 
+  <div class="card mb-3  " ">
+	<div class="card-body">
+	  <h5 class="card-title">Systems</h5>
+	  <p class="card-text"><i class="bi-cpu"></i> {{systems|length }}</p>
+	</div>
+  </div>
+</div>
+  <div class="col-md-4"> 
+  <div class="card mb-3 " ">
+	<div class="card-body">
+	  <h5 class="card-title">Queries</h5>
+	  <p class="card-text"> <i class="bi-search"></i> {{queries|length }}</p>
+	</div>
+  </div>
+</div>
+</div>  
+
+{% endblock %}
+
+
+<div class="card"  >
+<div class="card-header">
+	{% block filters %}
+	<h5 class="card-title">Evaluation  </h5>
+	<div class="row">
+		<div class="col-md-8">
+			<h6 class="card-subtitle  text-muted">Select Metric, round, systems and Queries for the evaluation</h6>
+		</div>
+		
+	</div>
+	<div class="row">
+		<div class="col-md-4">
+			<div class="form-check form-switch">
+				<input class="form-check-input" type="checkbox" role="switch" id="all_round" checked>
+				<label class="form-check-label" for="all_round">All Rounds </label>
+			</div>
+			<div class="form-check-inline">
+				{% if ees_list %}
+				{% for ee in ees_list %}
+				<input type="checkbox" class="btn-check" id="btn-check-outlined-round{{ ee.id }}" autocomplete="off" checked>
+				<label class="btn btn-sm btn-outline-primary" for="btn-check-outlined-round{{ ee.id }}">{{ ee.name }}</label>
+				{% endfor %}
+				{% endif %}
+			</div>
+		</div>
+		<div class="col-md-4">
+			<div class="form-check form-switch">
+				<input class="form-check-input" type="checkbox" role="switch" id="all_systems" checked>
+				<label class="form-check-label" for="all_systems">All systems </label>
+			</div>
+			<div class="row">
+				<div class="col-md-12">
+					<div class="d-grid gap-2">
+						<button class="btn btn-primary" data-bs-toggle="collapse" href="#multiCollapseExample1" role="button"
+							aria-expanded="false" aria-controls="multiCollapseExample1">Show Systems <i class="bi-chevron-down"></i>
+						</button>
+					</div>
+				</div>
+			</div>
+			<!-- <br> -->
+
+			<div class="collapse multi-collapse" id="multiCollapseExample1">
+				<div class="card card-body">
+					<div class="row  g-1 g-lg-2">
+						{% if ees_list %}
+						{% for sys in systems %}
+						<div class="col">
+							<div class="p-1">
+							 <input type="checkbox" class="btn-check check-sys" id="btn-check-outlined-sys{{ sys }}" autocomplete="off"  checked> <!-- {% if sys == system %} checked {% endif %} -->
+							<label class="btn btn-sm btn-outline-primary" for="btn-check-outlined-sys{{ sys }}">{{ sys }}</label>
+							</div>	
+						</div>
+						{% endfor %}
+						{% endif %}
+					</div>
+				</div>
+			</div>
+			<br>
+			<div class="row">
+				<div class="col-md-12 ">
+					<div class="d-grid gap-2">
+			<select id="select_test" class="form-select form-select-sm" title=" Load round">
+				{% for sys in systems %}
+				<option data-bs-toggle="tooltip" data-bs-title="Another tooltip" value="{{ sys }}" {% if sys == system %} selected {% endif %}> test system : {{ sys }} </option>
+				{% endfor %}
+			</select>
+		</div>
+		</div>
+	</div>
+		</div>
+		<div class="col-md-4">
+			<div class="form-check form-switch">
+				<input class="form-check-input" type="checkbox" role="switch" id="all_queries" checked>
+				<label class="form-check-label" for="all_queries">All queries </label>
+			</div>
+			<div class="row">
+				<div class="col-md-12">
+					<div class="d-grid gap-2">
+						<button class="btn btn-primary" data-bs-toggle="collapse" href="#multiCollapseExample1" role="button"
+							aria-expanded="false" aria-controls="multiCollapseExample1">Show Queries<i class="bi-chevron-down"></i>
+						</button>
+					</div>
+				</div>
+			</div>
+			<!-- <br> -->
+
+			<div class="collapse multi-collapse" id="multiCollapseExample1">
+				<div class="card card-body">
+					<div class="row  g-1 g-lg-2">
+						{% if ees_list %}
+						{% for qid in queries %}
+						<div class="col">
+							<!-- <div class="p-1"> -->
+								<input data-bs-toggle="tooltip" data-bs-title="query tooltip" type="checkbox" class="btn-check" id="btn-check-outlined-query{{ qid }}" checked autocomplete="off">
+								<label data-bs-toggle="tooltip" data-bs-title="query tooltip" class="btn btn-sm btn-outline-primary" for="btn-check-outlined-query{{ qid }}">{{ qid }}</label>
+										</div>	
+						<!-- </div> -->
+						{% endfor %}
+						{% endif %}
+					</div>
+				</div>
+			</div>
+<!-- 
+			<p>
+			{% if ees_list %}
+			{% for qid in queries %}
+			<input data-bs-toggle="tooltip" data-bs-title="query tooltip" type="checkbox" class="btn-check" id="btn-check-outlined-query{{ qid }}" checked autocomplete="off">
+			<label data-bs-toggle="tooltip" data-bs-title="query tooltip" class="btn btn-sm btn-outline-primary" for="btn-check-outlined-query{{ qid }}">{{ qid }}</label>
+			{% endfor %}
+			{% endif %}
+			</p> -->
+		</div>
+	</div>
+	<br>
+	<div class="row"> 
+		
+		<div class="col-md-4">
+			<!-- <div class="d-grid gap-2">
+				<button class=" btn btn-outline-primary" type="button" id="run_eval" >Run evaluation</button>
+			</div>
+			 -->
+		</div>
+		<div class="col-md-4 text-right d-grid gap-2">
+			<select id="select_metric" class="form-select form-select-sm" title=" Load round">
+				{% for met in metrics %}
+				<option value="{{ met }}" {% if met == metric %} selected {% endif %}> Metric: {{ met }} </option>
+				{% endfor %}
+			</select>
+		</div>
+		<div class="col-md-4">
+			<div class="d-grid gap-2">
+				<button class=" btn btn-outline-primary" type="button" id="run_eval" >Run evaluation</button>
+			</div>
+
+		</div>
+	</div>
+		
+	{% endblock %}
+</div>
+
+
+<div class="accordion-item">
+	<h2 class="accordion-header" id="panelsStayOpen-headingOne">
+		<button class="accordion-button" type="button" data-bs-toggle="collapse"
+			data-bs-target="#panelsStayOpen-collapseOne" aria-expanded="true"
+			aria-controls="panelsStayOpen-collapseOne">
+			Overview
+		</button>
+	</h2>
+
+	<div id="panelsStayOpen-collapseOne" class="accordion-collapse collapse show"
+		aria-labelledby="panelsStayOpen-headingOne">
+		<div class="accordion-body">
+
+
+			<div class="">
+				<ul class="nav nav-tabs" id="myTab" role="tablist">
+					<li class="nav-item" role="presentation">
+						<button class="nav-link active" id="home-tab" data-bs-toggle="tab"
+							data-bs-target="#home-tab-pane" type="button" role="tab" aria-controls="home-tab-pane"
+							aria-selected="true">Raw</button>
+					</li>
+					<li class="nav-item" role="presentation">
+						<button class="nav-link" id="profile-tab" data-bs-toggle="tab"
+							data-bs-target="#profile-tab-pane" type="button" role="tab" aria-controls="profile-tab-pane"
+							aria-selected="false">Normal</button>
+					</li>
+					<li class="nav-item" role="presentation">
+						<button class="nav-link" id="contact-tab" data-bs-toggle="tab"
+							data-bs-target="#contact-tab-pane" type="button" role="tab" aria-controls="contact-tab-pane"
+							aria-selected="false">Uniform</button>
+					</li>
+					
+				</ul>
+
+				<div class="tab-content" id="myTabContent">
+					<div class="tab-pane fade show active" id="home-tab-pane" role="tabpanel" aria-labelledby="home-tab"
+						tabindex="0">
+						<div class="card-body">
+							<h5 class="card-title">Performance Evaluation</h5>
+							<h6 class="card-subtitle  text-muted">Evaluation of systems using raw value</h6>
+
+							<!-- <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p> -->
+							<div id="d3_raw_legend"> </div>
+							<div id="d3_raw"> </div>
+							<!-- <svg width="600" height="100">
+							<g class="chart" transform="translate(50, 0)">
+						</g> -->
+							<!-- </svg> -->
+						</div>
+					</div>
+
+					<div class="tab-pane fade" id="profile-tab-pane" role="tabpanel" aria-labelledby="profile-tab"
+						tabindex="0">
+						<div class="card-body">
+							<h5 class="card-title">Performance Evaluation</h5>
+							<h6 class="card-subtitle  text-muted">Evaluation of systems using Normal Standardized values
+							</h6>
+
+							<div id="d3_normal_legend"> </div>
+							<div id="d3_normal"> </div>
+						</div>
+						...
+					</div>
+					<div class="tab-pane fade" id="contact-tab-pane" role="tabpanel" aria-labelledby="contact-tab"
+						tabindex="0">
+						<div class="card-body">
+							<h5 class="card-title">Performance Evaluation</h5>
+							<h6 class="card-subtitle  text-muted">Evaluation of systems using Uniform Standardized
+								values</h6>
+							<div id="d3_uniform_legend"> </div>
+							<div id="d3_uniform"> </div>
+						</div>
+					</div>
+
+				</div>
+			</div>
+		</div>
+
+
+	</div>
+</div>
+
+<div class="accordion-item">
+	<h2 class="accordion-header" id="panelsDeltas-headingOne">
+		<button class="accordion-button" type="button" data-bs-toggle="collapse"
+			data-bs-target="#panelsDeltas-collapseOne" aria-expanDed="true"
+			aria-controls="panelsDeltas-collapseOne">
+			Delta Analysis
+		</button>
+	</h2>
+
+	<div id="panelsDeltas-collapseOne" class="accordion-collapse collapse hide" aria-labelledby="panelsDeltas-headingOne">
+		<div class="accordion-body">
+			<div class="">
+				<div class="card-body">
+					<div class="row">
+						<div class="col-md-8">
+							<h5 class="card-title">Delta Evaluation</h5>
+							<h6 class="card-subtitle  text-muted">Select the standardization method </h6>
+						</div>
+						<div class="col-md-4 text-right">
+							<select id="select_std" class="form-select form-select-sm" title=" Load round">
+								<option value="raw" selected > raw </option>
+								<option value="normal"  > normal </option>
+								<option value="uniform"  > uniform </option>
+							</select>
+							<br>
+						</div>
+					</div>
+	
+					<!-- <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p> -->
+					<div id="d3_deltas_legend"> </div>
+					
+					<div id="d3_deltas"> </div>
+	
+				</div>
+			</div>
+		</div>
+	</div>
+	
+	
+	</div>
+
+	{% block metaanalysis %}
+	<div class="accordion-item">
+		<h2 class="accordion-header" id="panelsMetaEval-headingOne">
+			<button class="accordion-button" type="button" data-bs-toggle="collapse"
+				data-bs-target="#panelsMetaEval-collapseOne" aria-expanDed="true"
+				aria-controls="panelsMetaEval-collapseOne">
+				Meta Analysis
+			</button>
+		</h2>
+	
+		<div id="panelsMetaEval-collapseOne" class="accordion-collapse collapse hide" aria-labelledby="panelsMetaEval-headingOne">
+			<div class="accordion-body">
+				<div class="">
+					<div class="card-body">
+						<div class="row">
+							<div class="col-md-8">
+								<h5 class="card-title">Meta-Analysis</h5>
+								<h6 class="card-subtitle  text-muted">Select the baseline</h6>
+							</div>
+							<div class="col-md-4 text-right">
+								<select id="select_bl" class="form-select form-select-sm" title=" Load round">
+									{% for sys in systems %}
+									<option data-bs-toggle="tooltip" data-bs-title="Another tooltip" value="{{ sys }}" {% if sys == system %} selected {% endif %}> {{ sys }} </option>
+									{% endfor %}
+								</select>
+								<br>
+							</div>
+						</div>
+
+
+		
+						<!-- <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p> -->
+						<div id="d3_metaEval_legend"> </div>
+						
+						<div id="d3_metaEval"> </div>
+		
+					</div>
+				</div>
+			</div>
+		</div>
+		
+		
+		</div>
+		{% endblock %}
+
+		
+
+</div>
+</div>
+
+</div>
+
+{% endblock %}
+
+{% block jsscript %}
+<script type="text/javascript">
+	ees_cx = {{ ees_list|safe }}; 
+	systems_cx = {{ systems|safe }}; 
+	queries_cx = {{ queries|safe }}; 
+	csrf_token = '{{ csrf_token }}' ;
+	df_dict = JSON.parse('{{ df_dict|escapejs }}');
+	df_sys = JSON.parse('{{ df_sys|escapejs }}');	
+
+	function call_data(data_send){
+		$.ajax({
+		url: "{% url 'index' %}" , 
+		type: 'POST',
+		async: false,
+		data: data_send ,
+		success: function(data) {
+			result = data['results']; //JSON.parse(data['results']);
+			extra = data['extra']; 
+			results_normal = data['results_normal']; 
+			results_uniform= data['results_uniform']; 
+			if (data_send['type'] == 'meta_an' ){
+				results_metaev_data = JSON.parse(data['data_me']['data']); 
+				results_metaev_meta = JSON.parse(data['data_me']['meta']); 
+				meta_evaluation_plot(results_metaev_data, results_metaev_meta);
+			} 
+			else {
+				// if ((extra['kind']=='rounds') ) {
+					example_chart_grouped(result, div_name="#d3_raw"); 
+					example_chart_grouped(results_normal, div_name="#d3_normal"); 
+					example_chart_grouped(results_uniform, div_name="#d3_uniform"); 
+					delta_plot(result, div_name="#d3_deltas"); 
+
+				// } else {
+					console.log('NOT results_metaev'); 
+				// }
+			}
+
+			$('[data-bs-toggle="tooltip"]').tooltip(); 
+		},
+		failure: function(data) {
+			alert('Error de conexión');
+		},
+		crossDomain: true
+		});	
+		}
+
+</script>
+{% endblock %}
+
+{% load static %}
+<script src="{% static 'vis/js/functions.js' %}"></script>  
+
+
+
+
+

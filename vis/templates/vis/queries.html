@@ -1,0 +1,62 @@
+
+{% extends "./index_base.html" %}
+
+{% block metaanalysis %} {% endblock %}
+
+{% block jsscript %}
+
+<script type="text/javascript">
+	ees_cx = {{ ees_list|safe }}; 
+	systems_cx = {{ systems|safe }}; 
+	queries_cx = {{ queries|safe }}; 
+	csrf_token = '{{ csrf_token }}' ;
+	df_dict = JSON.parse('{{ df_dict|escapejs }}');
+	df_sys = JSON.parse('{{ df_sys|escapejs }}');	
+
+	// 1 round: qids_rounds
+	// 2 systems: qids_systems: several systems, one round.
+
+	function call_data(data_send){
+		$.ajax({
+		url: "{% url 'queries' %}" , 
+		type: 'POST',
+		async: false,
+		data: data_send ,
+		success: function(data) {
+			result = data['results']; //JSON.parse(data['results']);
+			extra = data['extra']; 
+			results_normal = data['results_normal']; 
+			results_uniform= data['results_uniform']; 
+
+			if (data_send['type'] == 'meta_an' ){
+				results_metaev_data = JSON.parse(data['data_me']['data']); 
+				results_metaev_meta = JSON.parse(data['data_me']['meta']); 
+				meta_evaluation_plot(results_metaev_data, results_metaev_meta);
+			} 
+			else {
+				// if ((extra['kind']=='rounds') ) {
+					example_chart_grouped(result, div_name="#d3_raw"); 
+					example_chart_grouped(results_normal, div_name="#d3_normal"); 
+					example_chart_grouped(results_uniform, div_name="#d3_uniform"); 
+					delta_plot(result, data_send['type'], div_name="#d3_deltas"); 
+
+				// } else {
+					console.log('NOT results_metaev'); 
+				// }
+			}
+
+			$('[data-bs-toggle="tooltip"]').tooltip(); 
+		},
+		failure: function(data) {
+			alert('Error de conexión');
+		},
+		crossDomain: true
+		});	
+		}
+
+</script>
+
+{% load static %}
+<script src="{% static 'vis/js/functions.js' %}"></script> 
+
+{% endblock %}
